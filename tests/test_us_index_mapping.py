@@ -157,6 +157,19 @@ class TestGetUsIndexYfSymbol(unittest.TestCase):
         self.assertEqual(symbol, '^IXIC')
         self.assertEqual(name, '纳斯达克综合指数')
 
+    def test_cross_asset_mapping(self):
+        """SOX / XAU / BTC should map to Yahoo index, gold futures and crypto symbols"""
+        expected = {
+            'SOX': ('^SOX', '费城半导体指数'),
+            'XAU': ('GC=F', '国际金价'),
+            'BTC': ('BTC-USD', '比特币'),
+        }
+        for code, pair in expected.items():
+            with self.subTest(code=code):
+                self.assertEqual(get_us_index_yf_symbol(code), pair)
+                self.assertTrue(is_us_index_code(code))
+                self.assertFalse(is_us_stock_code(code))
+
     def test_vix_mapping(self):
         """VIX should map to ^VIX"""
         symbol, name = get_us_index_yf_symbol('VIX')
@@ -200,11 +213,14 @@ class TestUsMappingCompleteness(unittest.TestCase):
                 self.assertTrue(len(name) > 0, f"{code} should have a non-empty name")
 
     def test_all_indices_have_yf_symbols(self):
-        """All indices in mapping should have valid YF symbols starting with ^"""
+        """YF symbols should be indices (^), futures (=F) or USD crypto pairs (-USD)"""
         for code, (symbol, name) in US_INDEX_MAPPING.items():
             with self.subTest(code=code):
                 self.assertIsNotNone(symbol)
-                self.assertTrue(symbol.startswith('^'), f"{code}'s YF symbol should start with ^")
+                self.assertTrue(
+                    symbol.startswith('^') or symbol.endswith('=F') or symbol.endswith('-USD'),
+                    f"{code}'s YF symbol should be an index, futures or USD crypto symbol",
+                )
 
 
 if __name__ == '__main__':

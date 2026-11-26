@@ -1,9 +1,10 @@
 name: 每日股票分析
 
 on:
-  # 定时触发：周一到周五 16:35（Asia/Taipei）
+  # 定时触发：美股收盘后，UTC 周一到周五 21:30 = 台北周二到周六 05:30
+  # （GitHub 排程高峰期可能延迟数小时）
   schedule:
-    - cron: '35 08 * * 1-5'
+    - cron: '30 21 * * 1-5'
   
   # 手动触发
   workflow_dispatch:
@@ -369,8 +370,8 @@ jobs:
           NOTIFICATION_SYSTEM_ERROR_CHANNELS: ${{ vars.NOTIFICATION_SYSTEM_ERROR_CHANNELS || secrets.NOTIFICATION_SYSTEM_ERROR_CHANNELS }}
           NOTIFICATION_DEDUP_TTL_SECONDS: ${{ vars.NOTIFICATION_DEDUP_TTL_SECONDS || secrets.NOTIFICATION_DEDUP_TTL_SECONDS || '0' }}
           NOTIFICATION_COOLDOWN_SECONDS: ${{ vars.NOTIFICATION_COOLDOWN_SECONDS || secrets.NOTIFICATION_COOLDOWN_SECONDS || '0' }}
-          NOTIFICATION_QUIET_HOURS: ${{ github.event_name == 'schedule' && '20:00-15:00' || vars.NOTIFICATION_QUIET_HOURS || secrets.NOTIFICATION_QUIET_HOURS }}
-          NOTIFICATION_TIMEZONE: ${{ github.event_name == 'schedule' && 'Asia/Taipei' || vars.NOTIFICATION_TIMEZONE || secrets.NOTIFICATION_TIMEZONE }}
+          NOTIFICATION_QUIET_HOURS: ${{ vars.NOTIFICATION_QUIET_HOURS || secrets.NOTIFICATION_QUIET_HOURS }}
+          NOTIFICATION_TIMEZONE: ${{ vars.NOTIFICATION_TIMEZONE || secrets.NOTIFICATION_TIMEZONE || 'Asia/Taipei' }}
           NOTIFICATION_MIN_SEVERITY: ${{ vars.NOTIFICATION_MIN_SEVERITY || secrets.NOTIFICATION_MIN_SEVERITY }}
           NOTIFICATION_DAILY_DIGEST_ENABLED: ${{ vars.NOTIFICATION_DAILY_DIGEST_ENABLED || secrets.NOTIFICATION_DAILY_DIGEST_ENABLED || 'false' }}
 
