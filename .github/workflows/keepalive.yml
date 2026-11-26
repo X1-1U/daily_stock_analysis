@@ -1,0 +1,24 @@
+name: Keepalive
+
+# GitHub 会在仓库 60 天无提交后自动停用 schedule 工作流。
+# 本工作流每月通过 API 重新启用每日分析与自身，避免定时推送静默中断。
+on:
+  schedule:
+    - cron: '0 3 1,15 * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 重新启用定时工作流
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          for wf in 00-daily-analysis.yml keepalive.yml; do
+            gh api -X PUT "repos/$REPO/actions/workflows/$wf/enable" && echo "✅ $wf 已启用"
+          done

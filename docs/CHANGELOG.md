@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 > For user-friendly release highlights, see the [GitHub Releases](https://github.com/ZhuLinsen/daily_stock_analysis/releases) page.
 
 ## [Unreleased]
+- [新功能] 美股指数映射新增 `SOX`（费城半导体指数 ^SOX）、`XAU`（国际金价 GC=F）、`BTC`（比特币 BTC-USD），可直接写入 `STOCK_LIST`。
+- [修复] 每日分析定时任务不再强制静默时段 `20:00-15:00`（GitHub 排程延迟会让推送落入静默期被跳过），新增 Keepalive 工作流防止 60 天无提交后定时任务被自动停用。
 - [改进] GitHub Actions 每日分析工作流补齐 TickFlow 数据源环境变量映射，并收敛 README 数据源稳定性说明到完整指南。
 - [修复] WebUI 启动时显式 `--host` / `--port` 不再被 `.env` 中的 `WEBUI_HOST` / `WEBUI_PORT` 覆盖，未传 CLI 参数时统一使用解析后的运行时配置。
 - [改进] GitHub Actions: 每日分析工作流（`00-daily-analysis.yml`）新增钉钉通知环境变量映射，支持在云端定时任务中直接使用钉钉机器人。
